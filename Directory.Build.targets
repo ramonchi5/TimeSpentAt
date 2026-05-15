@@ -1,0 +1,43 @@
+<Project>
+  <Target Name="CopyComponentToSiblingLiveSplitArtifacts"
+          AfterTargets="Build"
+          Condition="'$(CopyToLiveSplitArtifacts)' == 'true' and Exists('$(LiveSplitRepoPath)') and Exists('$(TargetPath)')">
+    <PropertyGroup>
+      <LiveSplitComponentArtifactsPath>$(LiveSplitRepoPath)artifacts\bin\$(MSBuildProjectName)\$(LiveSplitArtifactsConfiguration)\</LiveSplitComponentArtifactsPath>
+      <LiveSplitComponentBackupsPath>$(LiveSplitRepoPath)artifacts\bin\$(MSBuildProjectName)\Backups\</LiveSplitComponentBackupsPath>
+      <LiveSplitLatestReleasesPath>$(LiveSplitRepoPath)artifacts\LATEST RELEASES\</LiveSplitLatestReleasesPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ComponentArtifactFiles Include="$(TargetPath)" />
+      <ComponentArtifactFiles Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+    </ItemGroup>
+
+    <MakeDir Directories="$(LiveSplitComponentArtifactsPath)" />
+    <MakeDir Directories="$(LiveSplitComponentBackupsPath)" Condition="'$(LiveSplitArtifactsConfiguration)' == 'release'" />
+    <MakeDir Directories="$(LiveSplitLatestReleasesPath)" Condition="'$(LiveSplitArtifactsConfiguration)' == 'release'" />
+
+    <PropertyGroup Condition="'$(LiveSplitArtifactsConfiguration)' == 'release'">
+      <LiveSplitBackupCount>$([System.IO.Directory]::GetFiles('$(LiveSplitComponentBackupsPath)', '$(TargetName)(*).dll').Length)</LiveSplitBackupCount>
+      <LiveSplitBackupNumber>$([MSBuild]::Add($(LiveSplitBackupCount), 1))</LiveSplitBackupNumber>
+      <LiveSplitBackupDllPath>$(LiveSplitComponentBackupsPath)$(TargetName)($(LiveSplitBackupNumber)).dll</LiveSplitBackupDllPath>
+    </PropertyGroup>
+
+    <Copy SourceFiles="@(ComponentArtifactFiles)"
+          DestinationFolder="$(LiveSplitComponentArtifactsPath)"
+          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(TargetPath)"
+          DestinationFolder="$(LiveSplitLatestReleasesPath)"
+          SkipUnchangedFiles="true"
+          Condition="'$(LiveSplitArtifactsConfiguration)' == 'release'" />
+    <Copy SourceFiles="$(TargetPath)"
+          DestinationFiles="$(LiveSplitBackupDllPath)"
+          SkipUnchangedFiles="false"
+          Condition="'$(LiveSplitArtifactsConfiguration)' == 'release'" />
+    <Message Importance="high"
+             Text="Copied @(ComponentArtifactFiles->'%(Filename)%(Extension)', ', ') to $(LiveSplitComponentArtifactsPath)" />
+    <Message Importance="high"
+             Condition="'$(LiveSplitArtifactsConfiguration)' == 'release'"
+             Text="Copied $(TargetName).dll to $(LiveSplitLatestReleasesPath) and $(LiveSplitBackupDllPath)" />
+  </Target>
+</Project>

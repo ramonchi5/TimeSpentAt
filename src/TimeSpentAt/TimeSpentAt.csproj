@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net481</TargetFramework>
+    <LangVersion>13</LangVersion>
+    <Nullable>enable</Nullable>
+    <AssemblyName>LiveSplit.TimeSpentAt</AssemblyName>
+    <Version>1.0.0</Version>
+    <Title>TimeSpentAt</Title>
+    <Authors>Ramonchi</Authors>
+    <RepositoryUrl>https://github.com/ramonchi5/TimeSpentAt</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>../../README.md</PackageReadmeFile>
+    <PackageLicenseFile>../../LICENSE</PackageLicenseFile>
+    <Copyright>(c) 2026 TimeSpentAt contributors, MIT licensed</Copyright>
+    <Description>LiveSplit component for summing segment times whose names contain configured search text.</Description>
+    <IncludeSymbols>False</IncludeSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="LiveSplit.Core">
+      <Private>false</Private>
+      <HintPath>..\..\packages\LiveSplit.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="UpdateManager">
+      <Private>false</Private>
+      <HintPath>..\..\packages\UpdateManager.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+</Project>
